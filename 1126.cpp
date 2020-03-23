@@ -47,8 +47,6 @@ int go(int b, int differ)
 	return ans;
 }
 
-
-
 int main(void)
 {
 	cin >> n;

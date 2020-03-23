@@ -6,7 +6,9 @@
 using namespace std;
 
 bool c[1000001];
+//bfs하기 위한 해당 점 체크
 int d[1000001];
+//거리 저장 하기 위한 배열
 
 int main(void)
 {

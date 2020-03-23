@@ -23,7 +23,10 @@ int main()
 	}
 	cnt[0][0] = 0;
 	queue<pair<int, int>> q;
+	//처음에 0인 공간들 다 가보기.......
 	queue < pair<int, int>>next;
+	//0과 인접한 공간들 저장하는 queue
+	//가볼수 있는 곳을 다가면 q를 next로 치환한다.....
 	q.push(make_pair(0, 0));
 	while (!q.empty())
 	{
@@ -56,6 +59,7 @@ int main()
 		{
 			q = next;
 			next = queue<pair<int, int>>();
+			//오류 방지용
 		}
 	}
 	//for (int i = 0; i < m; i++)

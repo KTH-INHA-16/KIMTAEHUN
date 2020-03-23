@@ -4,83 +4,71 @@
 #include <vector>
 #include <queue>
 #include <cstring>
+#include <tuple>
 using namespace std;
 
-int a[1001][1001];
-int d[1001][1001];
-int b[1001][1001];
-bool cnt[1001][1001];
-int dx[] = { -1,1,0,0 };
-int dy[] = { 0,0,-1,1 };
-int n, m;
-
+int a[1000][1000];
+int d[1000][1000][2];
+int dx[] = { 0, 0, 1, -1 };
+int dy[] = { 1, -1, 0, 0 };
 int main()
 {
-	
+	int n, m;
 	scanf("%d %d", &n, &m);
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
 		{
 			scanf("%1d", &a[i][j]);
-			d[i][j] = -1;
 		}
 	}
-	d[0][0] = 1;
-	cnt[0][0] = true;
-	queue<pair<int, pair<int, int>>> q;
-	queue<pair<int, pair<int, int>>> next;
-	q.push(make_pair(0, make_pair(0, 0)));
+	queue<tuple<int, int, int>> q;
+	d[0][0][0] = 1;
+	q.push(make_tuple(0, 0, 0));
 	while (!q.empty())
 	{
-		int x = q.front().first;
-		int y = q.front().second.first;
-		int c = q.front().second.second;
-		q.pop();
+		int x, y, z;
+		tie(x, y, z) = q.front(); q.pop();
 		for (int k = 0; k < 4; k++)
 		{
 			int nx = x + dx[k];
 			int ny = y + dy[k];
 			if (nx < 0 || nx >= n || ny < 0 || ny >= m)
 				continue;
-			if (cnt[nx][ny]==false)
+			if (a[nx][ny] == 0 && d[nx][ny][z] == 0)
+				//해당 좌표가 0인 경우
 			{
-				if (a[nx][ny] == 0)
-				{
-					cnt[nx][ny] = true;
-					if (d[nx][ny] == -1)
-						d[nx][ny] = d[x][y] + 1;
-					else
-						d[nx][ny] = min(d[x][y] + 1, d[nx][ny]);
-					q.push(make_pair(nx, make_pair(ny, c)));
-				}
-				else if(a[nx][ny]==1)
-				{
-					if (c == 0)
-					{
-						cnt[nx][ny] = true;
-						if (d[nx][ny] == -1)
-							d[nx][ny] = d[x][y] + 1;
-						else
-							d[nx][ny] = min(d[x][y] + 1, d[nx][ny]);
-						next.push(make_pair(nx, make_pair(ny, c + 1)));
-					}
-				}
+				d[nx][ny][z] = d[x][y][z] + 1;
+				q.push(make_tuple(nx, ny, z));
+			}
+			if (z == 0 && a[nx][ny] == 1 && d[nx][ny][z + 1] == 0)
+				//벽을 0번 부수고 해당 좌표가 1이고
+				// z+1의 좌표가 0으로 미입력 경우
+			{
+				d[nx][ny][z + 1] = d[x][y][z] + 1;
+				q.push(make_tuple(nx, ny, z + 1));
 			}
 		}
-		if (q.empty())
-		{
-			q = next;
-			next = queue < pair<int, pair<int, int>>>();
-		}
 	}
-	for (int i = 0; i < n; i++)
+	if (d[n - 1][m - 1][0] != 0 && d[n - 1][m - 1][1] != 0)
+		//한번 부수고 + 안부수고 최종 점에 도달할때
 	{
-		for (int j = 0; j < m; j++)
-		{
-			cout << d[i][j] << ' ';
-		}
-		cout << '\n';
+		cout << min(d[n - 1][m - 1][0], d[n - 1][m - 1][1]);
 	}
-	cout << d[n - 1][m - 1] << '\n';
+	else if (d[n - 1][m - 1][0] != 0)
+		//부셔야지만 가능할때
+	{
+		cout << d[n - 1][m - 1][0];
+	}
+	else if (d[n - 1][m - 1][1] != 0)
+		//안부시고 가능한 경우
+	{
+		cout << d[n - 1][m - 1][1];
+	}
+	else
+	{
+		cout << -1;
+	}
+	cout << '\n';
+	return 0;
 }
