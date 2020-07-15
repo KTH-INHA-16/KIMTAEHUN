@@ -1,59 +1,50 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <queue>
+#include <utility>
 using namespace std;
 
-class Edge
-{
-public:
-	int start, to, cost;
-};
-
-const int inf = 100000000;
-int d[501];
+int m, n;
+vector<pair<int,int>> map[501];
+const long long inf = 1e18;
 
 int main()
 {
-	int n, m;
 	cin >> n >> m;
-	vector<Edge> a(m);
+	long long dist[501];
 	for (int i = 0; i < m; i++)
 	{
-		cin >> a[i].start >> a[i].to >> a[i].cost;
+		int a, b, c;
+		cin >> a >> b >> c;
+		map[a - 1].push_back({ b - 1,c });
 	}
-	for (int i = 1; i <= n; i++)
+	bool cycle = false;
+	fill(dist, dist + n, inf);
+	dist[0] = 0;
+	for (int i = 0; i < n; i++)
 	{
-		d[i] = inf;
-	}
-	d[1] = 0;
-
-	bool negative = false;
-	for (int i = 1; i <= n; i++)
-	{
-		for (int j = 0; j < m; j++)
+		for (int j = 0; j < n; j++)
 		{
-			int x = a[j].start;
-			int y = a[j].to;
-			int w = a[j].cost;
-			if (d[x]!=inf&&d[y] > d[x] + w)
+			for (int k = 0; k < map[j].size(); k++)
 			{
-				d[y] = d[x] + w;
-				if (i == n)
-					negative = true;
+				int next = map[j][k].first;
+				int next_d = map[j][k].second;
+				if (dist[j] != inf && dist[next] > dist[j] + next_d)
+				{
+					dist[next] = dist[j] + next_d;
+					if (i == n - 1)
+						cycle = true;
+				}
 			}
 		}
 	}
-	if (negative)
-	{
+	if (cycle)
 		cout << -1 << '\n';
-	}
 	else
 	{
-		for (int i = 2; i <= n; i++)
+		for (int i = 1; i < n; i++)
 		{
-			if (d[i] == inf)
-				d[i] = -1;
-			cout << d[i] << '\n';
+			cout << (dist[i] != inf ? dist[i] : -1) << '\n';
 		}
 	}
 }
